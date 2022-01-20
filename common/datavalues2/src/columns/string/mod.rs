@@ -26,6 +26,7 @@ pub use iterator::*;
 pub use mutable::*;
 
 use crate::prelude::*;
+use super::vee_experiment::*;
 
 // TODO adaptive offset
 #[derive(Debug, Clone)]
@@ -203,5 +204,18 @@ impl Column for StringColumn {
         // soundness: the invariant of the struct
         let str = self.values.get_unchecked(start..end);
         DataValue::String(str.to_vec())
+    }
+}
+
+impl GetDatas2<[u8]> for StringColumn {
+    fn get_data(&self, row: usize) -> &[u8] {
+        unsafe {
+            // soundness: the invariant of the function
+            let start = self.offsets.get_unchecked(row).to_usize();
+            let end = self.offsets.get_unchecked(row + 1).to_usize();
+            // soundness: the invariant of the struct
+            let x = self.values.get_unchecked(start..end);
+            x
+        }
     }
 }

@@ -30,6 +30,7 @@ pub use iterator::*;
 pub use mutable::*;
 
 use super::viewer::GetDatas;
+use super::vee_experiment::*;
 use crate::prelude::*;
 
 /// PrimitiveColumn is generic struct which wrapped arrow's PrimitiveArray
@@ -235,3 +236,11 @@ pub type Int64Column = PrimitiveColumn<i64>;
 
 pub type Float32Column = PrimitiveColumn<f32>;
 pub type Float64Column = PrimitiveColumn<f64>;
+
+impl GetDatas2<u8> for PrimitiveColumn<u8> {
+    fn get_data(&self, row: usize) -> &u8 {
+        let x = self.values.get(row).unwrap();
+        x
+    }
+}
+
