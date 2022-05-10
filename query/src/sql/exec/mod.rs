@@ -27,6 +27,7 @@ use common_planners::find_aggregate_exprs;
 use common_planners::find_aggregate_exprs_in_expr;
 use common_planners::Expression;
 use common_planners::RewriteHelper;
+use common_datablocks::DataBlock;
 pub use util::decode_field_name;
 pub use util::format_field_name;
 
@@ -59,6 +60,9 @@ use crate::sql::plans::PlanType;
 use crate::sql::plans::ProjectPlan;
 use crate::sql::IndexType;
 use crate::sql::Metadata;
+use common_datablocks::HashMethod;
+use common_datablocks::HashMethodKind;
+
 
 /// Helper to build a `Pipeline` from `SExpr`
 pub struct PipelineBuilder {
@@ -434,6 +438,23 @@ impl PipelineBuilder {
             .iter()
             .map(|scalar| eb.build(scalar))
             .collect::<Result<Vec<Expression>>>()?;
+
+        let build_columns = build_expressions
+            .iter()
+            .map(|x| x.column_name())
+            .collect::<Vec<_>>();
+        
+        let sample_block = DataBlock::empty_with_schema(build_schema.clone());
+        let hash_method = DataBlock::choose_hash_method(&sample_block, &build_columns)?;
+
+        match hash_method {
+            HashMethodKind::KeysU8(method) => ,
+            HashMethodKind::KeysU16(method) => ,
+            HashMethodKind::KeysU32(method) => ,
+            HashMethodKind::KeysU64(method) => ,
+            HashMethodKind::SingleString(method) => ,
+            HashMethodKind::Serializer(method) => ,
+        }
 
         let hash_join_state = Arc::new(ChainingHashTable::try_create(
             build_expressions,

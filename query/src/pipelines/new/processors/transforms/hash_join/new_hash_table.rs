@@ -19,6 +19,7 @@ use std::marker::Sync;
 use std::marker::Send;
 
 use common_datablocks::DataBlock;
+use common_datablocks::HashMethod;
 use common_datavalues::Column;
 use common_datavalues::ColumnRef;
 use common_datavalues::ConstColumn;
@@ -48,16 +49,41 @@ pub struct NewHashTable<T: HashTableKeyable> {
 
     ctx: Arc<QueryContext>,
 
+    hash_method: Arc<dyn HashMethod>,
+
     /// A shared big hash table stores all the rows from build side
     // hash_table: RwLock<Vec<Vec<RowPtr>>>,
+    // usize means address of Vec<RowPtr>
     hash_table: RwLock<HashMap<T, usize>>,
     row_space: RowSpace,
+
 }
 
 // Hack for HashJoinState: Send + Sync
 unsafe impl<T: HashTableKeyable + Send> Send for NewHashTable<T> {}
 
 unsafe impl<T: HashTableKeyable + Sync> Sync for NewHashTable<T> {}
+
+impl<T: HashTableKeyable> NewHashTable<T> {
+    fn try_create(
+        hash_method: Arc<dyn HashMethod>,
+        build_expressions: Vec<Expression>,
+        probe_expressions: Vec<Expression>,
+        build_data_schema: DataSchemaRef,
+        _probe_data_schema: DataSchemaRef,
+        ctx: Arc<QueryContext>,
+    ) -> Result<Self> {
+        Ok(NewHashTable {
+            row_space: RowSpace::new(build_data_schema),
+            ref_count: Mutex::new(0),
+            is_finished: Mutex::new(false),
+            build_expressions,
+            probe_expressions,
+            ctx,
+            hash_table: RwLock::new(vec![]),
+        })
+    }
+}
 
 impl<T: HashTableKeyable> HashJoinState for NewHashTable<T>
 where T: PrimitiveType {
