@@ -34,7 +34,7 @@ pub struct QueryConfig {
     #[clap(long, default_value = "127.0.0.1")]
     pub mysql_handler_host: String,
 
-    #[clap(long, default_value = "3307")]
+    #[clap(long, default_value = "3308")]
     pub mysql_handler_port: u16,
 
     #[clap(long, default_value = "256")]
@@ -43,13 +43,13 @@ pub struct QueryConfig {
     #[clap(long, default_value = "127.0.0.1")]
     pub clickhouse_handler_host: String,
 
-    #[clap(long, default_value = "9000")]
+    #[clap(long, default_value = "9002")]
     pub clickhouse_handler_port: u16,
 
     #[clap(long, default_value = "127.0.0.1")]
     pub http_handler_host: String,
 
-    #[clap(long, default_value = "8000")]
+    #[clap(long, default_value = "8002")]
     pub http_handler_port: u16,
 
     #[clap(long, default_value = "10000")]
@@ -154,12 +154,12 @@ impl Default for QueryConfig {
             cluster_id: "".to_string(),
             num_cpus: 0,
             mysql_handler_host: "127.0.0.1".to_string(),
-            mysql_handler_port: 3307,
+            mysql_handler_port: 3308,
             max_active_sessions: 256,
             clickhouse_handler_host: "127.0.0.1".to_string(),
-            clickhouse_handler_port: 9000,
+            clickhouse_handler_port: 9002,
             http_handler_host: "127.0.0.1".to_string(),
-            http_handler_port: 8000,
+            http_handler_port: 8002,
             http_handler_result_timeout_millis: 10000,
             flight_api_address: "127.0.0.1:9090".to_string(),
             admin_api_address: "127.0.0.1:8080".to_string(),

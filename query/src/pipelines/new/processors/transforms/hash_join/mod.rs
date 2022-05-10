@@ -12,6 +12,7 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+mod new_hash_table;
 mod chaining_hash_table;
 mod hash;
 mod hash_table;
